@@ -34,18 +34,8 @@ public class CarResource {
     @Consumes("application/json")
     @Produces("application/json")
     public String addCar(String car) {
-        String brand;
-        String model;
-        String numberPlate;
-        try{
-            JsonObject json = JsonParser.parseString(car).getAsJsonObject();
-            brand = json.get("brand").getAsString();
-            model = json.get("model").getAsString();
-            numberPlate = json.get("numberPlate").getAsString();
-        } catch (Exception e) {
-            return "{\"error\":\"Invalid JSON\"}";
-        }
-        CarDTO carDTO = new CarDTO(brand, model, numberPlate);
+
+        CarDTO carDTO = GSON.fromJson(car, CarDTO.class);
         return GSON.toJson(FACADE.create(carDTO));
     }
     @DELETE
