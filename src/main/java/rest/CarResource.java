@@ -30,6 +30,13 @@ public class CarResource {
     public String getAllCars() {
         return GSON.toJson(FACADE.getAllCars());
     }
+    @GET
+    @Path("{id}")
+    @Produces("application/json")
+    public String getCarById(@PathParam("id") int id) {
+        Long idLong = Long.valueOf(id);
+        return GSON.toJson(FACADE.getCarById(idLong));
+    }
     @POST
     @Consumes("application/json")
     @Produces("application/json")

@@ -9,10 +9,11 @@ import javax.persistence.*;
 @ToString
 @NoArgsConstructor
 @Entity
+@NamedQuery(name = "Car.deleteAllRows", query = "DELETE from Car")
 @Table(name = "Cars")
 public class Car  {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
    private String brand;
    private String model;

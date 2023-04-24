@@ -12,7 +12,6 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
- *
  * Rename Class to a relevant name Add add relevant facade methods
  */
 public class CarFacade {
@@ -21,11 +20,11 @@ public class CarFacade {
     private static EntityManagerFactory emf;
 
     //Private Constructor to ensure Singleton
-    private CarFacade() {}
-    
-    
+    private CarFacade() {
+    }
+
+
     /**
-     * 
      * @param _emf
      * @return an instance of this facade class.
      */
@@ -40,8 +39,8 @@ public class CarFacade {
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
-    public CarDTO create(CarDTO carDTO){
+
+    public CarDTO create(CarDTO carDTO) {
         Car car = new Car(carDTO.getBrand(), carDTO.getModel(), carDTO.getNumberPlate());
         EntityManager em = getEntityManager();
         try {
@@ -53,11 +52,22 @@ public class CarFacade {
         }
         return new CarDTO(car);
     }
+
     public List<CarDTO> getAllCars() {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Car> query = em.createQuery("SELECT c FROM Car c", Car.class);
         List<Car> cars = query.getResultList();
         return new CarDTO().getDTOs(cars);
+    }
+
+    // Get a car by id
+    public CarDTO getCarById(Long id) {
+        EntityManager em = emf.createEntityManager();
+        Car car = em.find(Car.class, id);
+        if (car == null) {
+            throw new IllegalArgumentException("No car with that id");
+        }
+        return new CarDTO(car);
     }
 
 
@@ -71,6 +81,14 @@ public class CarFacade {
         } finally {
             em.close();
         }
+    }
+
+    public static void main(String[] args) {
+        emf = EMF_Creator.createEntityManagerFactory();
+        CarFacade fe = getCarFacade(emf);
+
 
     }
+
+
 }

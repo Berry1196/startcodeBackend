@@ -26,7 +26,10 @@ public class CarDTO {
     }
 
     public CarDTO(Car c) {
-        this.id = c.getId();
+
+       if (c.getId() != null){
+            this.id = c.getId();
+        }
         this.brand = c.getBrand();
         this.model = c.getModel();
         this.numberPlate = c.getNumberPlate();

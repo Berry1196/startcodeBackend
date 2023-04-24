@@ -97,7 +97,7 @@ public class CarEndpointTest {
                 .contentType("application/json")
                 .get("/cars").then()
                 .assertThat()
-                .statusCode(200).body("data.id", equals(2) )
+                .statusCode(200).body("size()", org.hamcrest.Matchers.is(3));
     }
 
 }
