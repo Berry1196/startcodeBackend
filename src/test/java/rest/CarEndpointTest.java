@@ -5,6 +5,7 @@ import entities.Role;
 import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
+import io.restassured.specification.Argument;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -60,25 +62,24 @@ public class CarEndpointTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        Car c1 = new Car("Volvo", "V70", "ABC1234");
+        Car c2 = new Car("BMW", "M3", "DEF5678");
+        Car c3 = new Car("Audi", "A4", "GHI9101");
+        Car c4 = new Car("Ford", "Mustang", "JKL1112");
         try {
             em.getTransaction().begin();
             //Delete existing users and roles to get a "fresh" database
-            em.createQuery("delete from Car").executeUpdate();
-
-            Car c1 = new Car("Volvo", "V70", "ABC1234");
-            Car c2 = new Car("BMW", "M3", "DEF5678");
-            Car c3 = new Car("Audi", "A4", "GHI9101");
+            em.createNamedQuery("Car.deleteAllRows").executeUpdate();
             em.persist(c1);
             em.persist(c2);
             em.persist(c3);
+            em.persist(c4);
 
             //System.out.println("Saved test data to database");
             em.getTransaction().commit();
         } finally {
             em.close();
         }
-
-
     }
 
     @Test
@@ -90,6 +91,7 @@ public class CarEndpointTest {
                 .then()
                 .statusCode(200);
     }
+
     // Rest assured test that verifies that the endpoint returns the number of rows in the Car table.
     @Test
     public void testCount() throws Exception {
@@ -99,5 +101,18 @@ public class CarEndpointTest {
                 .assertThat()
                 .statusCode(200).body("size()", org.hamcrest.Matchers.is(3));
     }
+
+    // Rest assured test that verifies that the endpoint returns the correct car.
+    @Test
+    public void testGetCarById() throws Exception {
+        given()
+                .contentType("application/json")
+                .get("/cars/1").then()
+                .assertThat()
+                .body("brand", org.hamcrest.Matchers.equalTo("Volvo"))
+                .body("model", org.hamcrest.Matchers.equalTo("V70"))
+                .body("numberPlate", org.hamcrest.Matchers.equalTo("ABC1234"));
+    }
+
 
 }
