@@ -116,6 +116,4 @@ public class CarEndpointTest {
                 .body("numberPlate", equalTo("ABC1234"));
 
     }
-
-
 }
